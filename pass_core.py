@@ -209,15 +209,30 @@ def clipboard_set(text, clear_after=0):
     if clear_after > 0:
         digest = hashlib.sha256(text.encode()).hexdigest()
         script = (
-            "import subprocess, time, sys, hashlib\n"
+            "import subprocess, time, sys, hashlib, os\n"
             "time.sleep(int(sys.argv[1]))\n"
             "digest = sys.stdin.read().strip()\n"
             "r = subprocess.run(['pbpaste'], capture_output=True, text=True)\n"
             "if hashlib.sha256(r.stdout.encode()).hexdigest() == digest:\n"
             "    subprocess.run(['pbcopy'], input='', text=True)\n"
+            "    notifier = sys.argv[2] if len(sys.argv) > 2 else ''\n"
+            "    msg = 'Clipboard cleared'\n"
+            "    title = 'Proton Pass'\n"
+            "    if notifier:\n"
+            "        icon = sys.argv[3] if len(sys.argv) > 3 else ''\n"
+            "        subprocess.run([notifier, '-title', title, '-message', msg,\n"
+            "            '-contentImage', icon, '-group', 'proton-pass-alfred',\n"
+            "            '-sender', 'com.runningwithcrayons.Alfred'], capture_output=True)\n"
+            "    else:\n"
+            "        subprocess.run(['osascript', '-e',\n"
+            "            'on run argv\\n  display notification (item 1 of argv) with title (item 2 of argv)\\nend run',\n"
+            "            msg, title], capture_output=True)\n"
         )
+        args = [sys.executable, "-c", script, str(clear_after)]
+        if _NOTIFIER:
+            args += [_NOTIFIER, os.path.join(_WORKFLOW_DIR, "icon.png")]
         proc = subprocess.Popen(
-            [sys.executable, "-c", script, str(clear_after)],
+            args,
             stdin=subprocess.PIPE, stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL, start_new_session=True, text=True,
         )

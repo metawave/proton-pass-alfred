@@ -1,0 +1,9 @@
+when:
+  - event: [push, pull_request]
+
+steps:
+  - name: ruff
+    image: python:3-alpine
+    commands:
+      - pip install --quiet ruff
+      - ruff check .

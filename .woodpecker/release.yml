@@ -1,0 +1,20 @@
+when:
+  - event: tag
+    ref: refs/tags/v*
+
+steps:
+  - name: package
+    image: alpine:3
+    commands:
+      - apk add --no-cache zip
+      - zip -j proton-pass-alfred.alfredworkflow action.py pass_core.py search.py info.plist icon.png
+
+  - name: release
+    image: woodpeckerci/plugin-release
+    settings:
+      api_key:
+        from_secret: GITHUB_TOKEN
+      files:
+        - proton-pass-alfred.alfredworkflow
+      title: ${CI_COMMIT_TAG}
+      generate-release-notes: true
