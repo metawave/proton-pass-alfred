@@ -7,3 +7,8 @@ steps:
     commands:
       - pip install --quiet ruff
       - ruff check .
+
+  - name: tests
+    image: python:3-alpine
+    commands:
+      - python -m unittest discover -s tests -t . -v
