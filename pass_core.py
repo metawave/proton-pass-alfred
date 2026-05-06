@@ -17,19 +17,24 @@ _VAULT_CACHE_TTL = 300
 _SAFE_DOMAIN = re.compile(r'^[a-zA-Z0-9]([a-zA-Z0-9\-.]{0,251}[a-zA-Z0-9])?$')
 _WORKFLOW_DIR = os.path.dirname(os.path.abspath(__file__))
 _NOTIFIER = shutil.which("terminal-notifier")
-_CLI = None
+
+
+def _resolve_cli():
+    cli = shutil.which("pass-cli")
+    if cli:
+        return cli
+    fallback = os.path.expanduser("~/.local/bin/pass-cli")
+    if os.path.isfile(fallback) and os.access(fallback, os.X_OK):
+        return fallback
+    return None
+
+
+_CLI = _resolve_cli()
 
 
 def validate():
-    global _CLI
-    if _CLI is None:
-        _CLI = shutil.which("pass-cli")
-        if not _CLI:
-            p = os.path.expanduser("~/.local/bin/pass-cli")
-            if os.path.isfile(p) and os.access(p, os.X_OK):
-                _CLI = p
-        if not _CLI:
-            raise RuntimeError("pass-cli not found. Install via: brew install protonpass/tap/pass-cli")
+    if not _CLI:
+        raise RuntimeError("pass-cli not found. Install via: brew install protonpass/tap/pass-cli")
 
 
 def _cli_run(*args):

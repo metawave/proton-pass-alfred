@@ -1,11 +1,16 @@
 import os
+import sys
 
 from pass_core import (
     clipboard_set, get_password, get_totp, lock, notify, open_url, unlock,
     validate,
 )
 
-validate()
+try:
+    validate()
+except RuntimeError as e:
+    notify(str(e))
+    sys.exit(1)
 
 
 def run():

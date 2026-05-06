@@ -2,8 +2,7 @@ when:
   - event: [push, pull_request]
 
 steps:
-  - name: ruff
+  - name: unittest
     image: python:3-alpine
     commands:
-      - pip install --quiet ruff
-      - ruff check .
+      - python -m unittest discover -s tests -t . -v

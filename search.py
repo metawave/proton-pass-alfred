@@ -49,6 +49,10 @@ def run():
 
     entries = search(query)
 
+    if entries is None:
+        alfred_json([LOGIN_ITEM])
+        return
+
     if not entries:
         alfred_json([make_item("empty", "No results",
                                f"No items matching '{query[:100]}'", "")])
