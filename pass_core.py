@@ -154,7 +154,20 @@ def get_password(composite_id):
 
 
 def get_totp(composite_id):
-    return _cli_secret(composite_id, "item", "totp")
+    share_id, _, item_id = composite_id.partition(":")
+    if not share_id or not item_id:
+        return None
+    r = _cli_run("item", "totp", "--share-id", share_id, "--item-id", item_id, "--output", "json")
+    if r.returncode != 0:
+        return None
+    try:
+        data = json.loads(r.stdout)
+    except (json.JSONDecodeError, ValueError):
+        return None
+    code = data.get("totp")
+    if not code and data:
+        code = next(iter(data.values()), None)
+    return code or None
 
 
 def open_url(url):
