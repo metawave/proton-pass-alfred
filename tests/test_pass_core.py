@@ -19,6 +19,7 @@ class GetTotpTests(unittest.TestCase):
 
     def test_falls_back_to_first_value_when_no_totp_key(self):
         with patch.object(pass_core, "_cli_run", return_value=_cp(stdout='{"TOTP 1": "119533", "TOTP 2": "622653"}')):
+            self.assertIn(pass_core.get_totp("share:item"), {"119533", "622653"})
             self.assertEqual(pass_core.get_totp("share:item"), "119533")
 
     def test_passes_share_and_item_id_with_json_output(self):
