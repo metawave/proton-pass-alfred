@@ -51,7 +51,7 @@ def _cli_secret(composite_id, *args):
     share_id, _, item_id = composite_id.partition(":")
     if not share_id or not item_id:
         return None
-    r = _cli_run(*args, "--share-id", share_id, "--item-id", item_id)
+    r = _cli_run(*args, f"--share-id={share_id}", f"--item-id={item_id}")
     return r.stdout.strip() if r.returncode == 0 else None
 
 
@@ -162,7 +162,7 @@ def get_totp(composite_id):
     share_id, _, item_id = composite_id.partition(":")
     if not share_id or not item_id:
         return None
-    r = _cli_run("item", "totp", "--share-id", share_id, "--item-id", item_id, "--output", "json")
+    r = _cli_run("item", "totp", f"--share-id={share_id}", f"--item-id={item_id}", "--output", "json")
     if r.returncode != 0:
         return None
     try:
