@@ -27,10 +27,19 @@ class GetTotpTests(unittest.TestCase):
             pass_core.get_totp("SHARE_ABC:ITEM_XYZ")
         m.assert_called_once_with(
             "item", "totp",
-            "--share-id", "SHARE_ABC",
-            "--item-id", "ITEM_XYZ",
+            "--share-id=SHARE_ABC",
+            "--item-id=ITEM_XYZ",
             "--output", "json",
         )
+
+    def test_uses_equals_form_for_ids_with_leading_dash(self):
+        with patch.object(pass_core, "_cli_run", return_value=_cp(stdout='{"totp": "1"}')) as m:
+            pass_core.get_totp("-DASH_SHARE:-DASH_ITEM")
+        args = m.call_args.args
+        self.assertIn("--share-id=-DASH_SHARE", args)
+        self.assertIn("--item-id=-DASH_ITEM", args)
+        self.assertNotIn("-DASH_SHARE", args)
+        self.assertNotIn("-DASH_ITEM", args)
 
     def test_returns_none_on_nonzero_returncode(self):
         with patch.object(pass_core, "_cli_run", return_value=_cp(returncode=1, stderr="boom")):
@@ -57,8 +66,17 @@ class GetPasswordTests(unittest.TestCase):
             self.assertEqual(pass_core.get_password("SHARE:ITEM"), "hunter2")
         m.assert_called_once_with(
             "item", "view", "--field", "password",
-            "--share-id", "SHARE", "--item-id", "ITEM",
+            "--share-id=SHARE", "--item-id=ITEM",
         )
+
+    def test_uses_equals_form_for_ids_with_leading_dash(self):
+        with patch.object(pass_core, "_cli_run", return_value=_cp(stdout="pw")) as m:
+            pass_core.get_password("-DASH_SHARE:-DASH_ITEM")
+        args = m.call_args.args
+        self.assertIn("--share-id=-DASH_SHARE", args)
+        self.assertIn("--item-id=-DASH_ITEM", args)
+        self.assertNotIn("-DASH_SHARE", args)
+        self.assertNotIn("-DASH_ITEM", args)
 
     def test_returns_none_on_nonzero_returncode(self):
         with patch.object(pass_core, "_cli_run", return_value=_cp(returncode=1, stderr="boom")):
