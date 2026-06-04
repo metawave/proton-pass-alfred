@@ -267,7 +267,7 @@ class FetchVaultItemsTests(unittest.TestCase):
     def test_filters_to_login_type(self):
         with patch.object(pass_core, "_cli_run", return_value=_cp(stdout='{"items": []}')) as m:
             pass_core._fetch_vault_items("Personal")
-        m.assert_called_once_with("item", "list", "Personal", "--filter-type", "login", "--output", "json")
+        m.assert_called_once_with("item", "list", "Personal", "--filter-type", "login", "--output", "json", "--show-secrets")
 
 
 if __name__ == "__main__":
