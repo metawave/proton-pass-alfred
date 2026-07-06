@@ -124,7 +124,7 @@ def _parse_entry(entry, vault_name):
 
 
 def _fetch_vault_items(vault_name):
-    r = _cli_run("item", "list", vault_name, "--filter-type", "login", "--output", "json")
+    r = _cli_run("item", "list", vault_name, "--filter-type", "login", "--output", "json", "--show-secrets")
     if r.returncode != 0:
         return []
     try:
