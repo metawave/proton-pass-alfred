@@ -1,3 +1,4 @@
+name: Release
 on:
   push:
     tags: ['v*']
@@ -9,7 +10,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Package
         run: zip -j proton-pass-alfred.alfredworkflow action.py pass_core.py search.py info.plist icon.png
       - name: Release notes from CHANGELOG.md
@@ -18,7 +20,7 @@ jobs:
           awk -v v="## [$VERSION]" 'index($0,v)==1{p=1;next} p&&index($0,"## [")==1{exit} p' CHANGELOG.md > release-notes.md
           test -s release-notes.md || { echo "no CHANGELOG section for $VERSION"; exit 1; }
           cat release-notes.md
-      - name: Release
+      - name: Create the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release create "$GITHUB_REF_NAME" proton-pass-alfred.alfredworkflow --title "$GITHUB_REF_NAME" --notes-file release-notes.md
