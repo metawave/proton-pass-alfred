@@ -1,8 +1,0 @@
-when:
-  - event: [push, pull_request]
-
-steps:
-  - name: unittest
-    image: python:3-alpine
-    commands:
-      - python -m unittest discover -s tests -t . -v
