@@ -22,7 +22,7 @@ LOGIN_ITEM = make_item(
 )
 
 try:
-    from pass_core import validate, is_logged_in, search, icon_path, fetch_missing_icons
+    from pass_core import fetch_missing_icons, icon_path, is_logged_in, search, validate
     validate()
 except RuntimeError:
     import traceback

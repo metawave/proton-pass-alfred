@@ -41,7 +41,7 @@ def _cli_run(*args):
     try:
         return subprocess.run(
             [_CLI] + list(args),
-            capture_output=True, text=True, timeout=_CLI_TIMEOUT,
+            capture_output=True, text=True, timeout=_CLI_TIMEOUT, check=False,
         )
     except subprocess.TimeoutExpired:
         return subprocess.CompletedProcess(args, returncode=1, stdout="", stderr="timeout")
@@ -100,7 +100,7 @@ def _extract_domain(uris):
             host = urlparse(uri).hostname
             if host and _SAFE_DOMAIN.match(host):
                 return host
-        except Exception:
+        except ValueError:
             continue
     return None
 
@@ -265,7 +265,7 @@ def notify(message, title="Proton Pass"):
             [_NOTIFIER, "-title", title, "-message", message,
              "-contentImage", icon, "-group", "proton-pass-alfred",
              "-sender", "com.runningwithcrayons.Alfred"],
-            capture_output=True,
+            capture_output=True, check=False,
         )
     else:
         script = (
@@ -273,4 +273,4 @@ def notify(message, title="Proton Pass"):
             "  display notification (item 1 of argv) with title (item 2 of argv)\n"
             "end run"
         )
-        subprocess.run(["osascript", "-e", script, message, title], capture_output=True)
+        subprocess.run(["osascript", "-e", script, message, title], capture_output=True, check=False)

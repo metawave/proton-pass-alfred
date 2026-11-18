@@ -2,7 +2,13 @@ import os
 import sys
 
 from pass_core import (
-    clipboard_set, get_password, get_totp, lock, notify, open_url, unlock,
+    clipboard_set,
+    get_password,
+    get_totp,
+    lock,
+    notify,
+    open_url,
+    unlock,
     validate,
 )
 
